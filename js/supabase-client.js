@@ -38,14 +38,31 @@
     }
 
     try {
-      // استخدام upsert (insert or update) - أبسط وأضمن
+      // إرسال البيانات الأساسية فقط (بدون الحقول التي قد تسبب مشاكل)
+      const cleanReport = {
+        id: report.id,
+        userId: report.userId,
+        date: report.date,
+        userDate: report.userDate,
+        quran: report.quran || {},
+        poetry: report.poetry || {},
+        reading: report.reading || {},
+        qiyam: report.qiyam || false,
+        note: report.note || '',
+        teacherNote: report.teacherNote || '',
+        submitted: report.submitted || false,
+        teacherSeen: report.teacherSeen || false,
+        updatedAt: report.updatedAt || Date.now()
+      };
+
+      // استخدام upsert (insert or update)
       const saveResponse = await fetch(`${API_URL}/reports`, {
         method: 'POST',
         headers: {
           ...headers(),
           'Prefer': 'resolution=merge-duplicates,return=representation'
         },
-        body: JSON.stringify(report)
+        body: JSON.stringify(cleanReport)
       });
 
       if (!saveResponse.ok) {
