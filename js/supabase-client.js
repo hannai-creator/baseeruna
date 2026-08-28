@@ -38,33 +38,28 @@
     }
 
     try {
-      const response = await fetch(`${API_URL}/reports?id=eq.${report.id}`, {
-        method: 'GET',
-        headers: headers()
-      });
-
-      const exists = (await response.json()).length > 0;
-
-      // تحديث أو إدراج
-      const method = exists ? 'PATCH' : 'POST';
-      const url = exists ? `${API_URL}/reports?id=eq.${report.id}` : `${API_URL}/reports`;
-
-      const saveResponse = await fetch(url, {
-        method,
-        headers: headers(),
+      // استخدام upsert (insert or update) - أبسط وأضمن
+      const saveResponse = await fetch(`${API_URL}/reports`, {
+        method: 'POST',
+        headers: {
+          ...headers(),
+          'Prefer': 'resolution=merge-duplicates,return=representation'
+        },
         body: JSON.stringify(report)
       });
 
       if (!saveResponse.ok) {
-        const error = await saveResponse.text();
-        throw new Error(`خطأ في الحفظ: ${error}`);
+        const errorText = await saveResponse.text();
+        console.error('[Supabase] Response error:', errorText);
+        throw new Error(`خطأ في الحفظ: ${saveResponse.status} - ${errorText}`);
       }
 
       const saved = await saveResponse.json();
-      console.log('[Supabase] تم حفظ التقرير:', report.id);
+      console.log('[Supabase] ✅ تم حفظ التقرير بنجاح:', report.id);
       return saved[0] || saved;
     } catch (error) {
-      console.error('[Supabase] فشل حفظ التقرير:', error);
+      console.error('[Supabase] ❌ فشل حفظ التقرير:', error);
+      console.error('[Supabase] تفاصيل الخطأ:', error.message);
       throw error;
     }
   }
