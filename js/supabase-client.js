@@ -38,21 +38,23 @@
     }
 
     try {
-      // إرسال البيانات الأساسية فقط (بدون الحقول التي قد تسبب مشاكل)
+      // تحويل أسماء الحقول إلى lowercase لتطابق PostgreSQL
       const cleanReport = {
         id: report.id,
-        userId: report.userId,
+        userid: report.userId,           // lowercase
         date: report.date,
-        userDate: report.userDate,
+        userdate: report.userDate,        // lowercase
         quran: report.quran || {},
         poetry: report.poetry || {},
         reading: report.reading || {},
         qiyam: report.qiyam || false,
         note: report.note || '',
-        teacherNote: report.teacherNote || '',
+        teachernote: report.teacherNote || '',  // lowercase
         submitted: report.submitted || false,
-        teacherSeen: report.teacherSeen || false,
-        updatedAt: report.updatedAt || Date.now()
+        submittedat: report.submittedAt || null,  // lowercase
+        teacherseen: report.teacherSeen || false, // lowercase
+        updatedat: report.updatedAt || Date.now(), // lowercase
+        createdat: report.createdAt || Date.now()  // lowercase
       };
 
       // استخدام upsert (insert or update)
