@@ -1327,8 +1327,10 @@ window.Reports = {
       try {
         await window.SupabaseClient.saveReport(rec);
         console.log('[Reports] تم إرسال التقرير إلى الخادم ✓');
+        UI && UI.toast && UI.toast('تم إرسال التقرير بنجاح ✓', 'ok');
       } catch (e) {
-        console.error('[Reports] فشل إرسال التقرير:', e);
+        console.error('[Reports] فشل إرسال التقرير - التفاصيل:', e);
+        console.error('[Reports] رسالة الخطأ:', e.message);
         UI && UI.toast && UI.toast('تم الحفظ محلياً - تحقق من الاتصال بالإنترنت', 'warn');
       }
     }
