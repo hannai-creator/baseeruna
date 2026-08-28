@@ -51,7 +51,7 @@
     for (const t of everyone.filter(u => u.role === 'teacher')) await Library.seed(t.id);
 
     /* ── preferences ──────────────────────────────────── */
-    const theme = (await DB.setting('theme')) || 'dark';
+    const theme = (await DB.setting('theme')) || 'light';
     document.documentElement.dataset.theme = theme;
     const metaTheme = document.querySelector('meta[name=theme-color]');
     if (metaTheme) metaTheme.content = theme === 'light' ? '#F6F2E9' : '#07120F';

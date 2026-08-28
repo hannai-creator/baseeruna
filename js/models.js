@@ -1305,12 +1305,34 @@ window.Reports = {
     });
     Object.assign(rec, patch);
     await DB.put('reports', rec);
+
+    /* ── إرسال التقرير إلى Supabase إذا كان معداً ────────── */
+    if (window.SupabaseClient && window.SupabaseClient.isConfigured) {
+      try {
+        await window.SupabaseClient.saveReport(rec);
+      } catch (e) {
+        console.warn('[Reports] فشل الحفظ في Supabase، محفوظ محلياً فقط:', e);
+      }
+    }
+
     return rec;
   },
 
   async submit(userId, date) {
     const rec = await this.save(userId, date, { submitted: true, submittedAt: Date.now() });
     await Badges.check(userId);
+
+    /* ── إرسال التقرير النهائي إلى Supabase ────────────── */
+    if (window.SupabaseClient && window.SupabaseClient.isConfigured) {
+      try {
+        await window.SupabaseClient.saveReport(rec);
+        console.log('[Reports] تم إرسال التقرير إلى الخادم ✓');
+      } catch (e) {
+        console.error('[Reports] فشل إرسال التقرير:', e);
+        UI && UI.toast && UI.toast('تم الحفظ محلياً - تحقق من الاتصال بالإنترنت', 'warn');
+      }
+    }
+
     return rec;
   },
 

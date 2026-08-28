@@ -30,7 +30,7 @@
     ]));
 
     /* ── appearance ───────────────────────────────────── */
-    const theme = (await DB.setting('theme')) || 'dark';
+    const theme = (await DB.setting('theme')) || 'light';
     page.appendChild(UI.card([
       UI.sectionTitle(T('appearance')),
       UI.field(T('theme'), UI.chips([
